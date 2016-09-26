@@ -26,8 +26,8 @@ public class BoardView extends AppCompatImageView  {
 
     protected Paint mPaint = null;
     protected Canvas mCanvas = null;
-    protected int mPaintColor = android.R.color.black ; //画笔颜色
-    protected int mPaintSize = 2; //画笔大小
+    protected int mPaintColor = android.R.color.holo_red_dark ; //画笔颜色
+    protected int mPaintSize = 4; //画笔大小
     protected Bitmap mBitmap; //画布Bitmap
 
     private Path mPath;
