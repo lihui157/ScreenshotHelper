@@ -55,11 +55,8 @@ public class BoardView extends AppCompatImageView  {
         mPath = new Path();
         //创建位图
         mBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-
         mCanvas = new Canvas(mBitmap);
-
 //        mCanvas.drawColor(mBitmapBackground);
-
         mPaint=new Paint(Paint.DITHER_FLAG);//创建一个画笔
         mPaint.setStyle(Paint.Style.STROKE);//设置非填充
         mPaint.setStrokeWidth(mPaintSize); //设置默认笔宽
@@ -92,6 +89,7 @@ public class BoardView extends AppCompatImageView  {
             case MotionEvent.ACTION_UP:
                 onTouchUp(x, y);
                 invalidate();
+                mBitmap = getCurrentBitmap();
                 break;
             default:
         }
@@ -145,5 +143,12 @@ public class BoardView extends AppCompatImageView  {
 
     public void freeBitmaps() {
         mBitmap.recycle();
+    }
+
+    public Bitmap getCurrentBitmap(){
+        setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(getDrawingCache());
+        setDrawingCacheEnabled(false);
+        return bitmap;
     }
 }

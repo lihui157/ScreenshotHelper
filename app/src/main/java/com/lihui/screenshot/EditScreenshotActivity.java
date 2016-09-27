@@ -3,7 +3,10 @@ package com.lihui.screenshot;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageView;
@@ -11,6 +14,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.lihui.screenshot.view.BoardView;
+
+import java.io.File;
 
 public class EditScreenshotActivity extends AppCompatActivity {
 
@@ -57,6 +62,14 @@ public class EditScreenshotActivity extends AppCompatActivity {
                 case R.id.tvBackHistory:
                     break;
                 case R.id.tvSave:
+                    String file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                            .getAbsolutePath()+"/helper/"+System.currentTimeMillis()+".png";
+                    Utils.saveBitmapFile(file,ivBoard.getCurrentBitmap());
+                    Intent sendIntent =new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(file)));
+                    sendIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(sendIntent, "发送给"));
                     break;
                 case R.id.tvCancle:
                     break;
