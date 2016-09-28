@@ -1,12 +1,15 @@
 package com.lihui.screenshot;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageView;
@@ -23,6 +26,7 @@ public class EditScreenshotActivity extends AppCompatActivity {
 
     private BoardView ivBoard;
     private TextView tvSave,tvCancle,tvBackHistory,tvText,tvDraw;
+    private String path;
 
     public static void toActivity(Context context,String imgPath){
         Intent intent = new Intent();
@@ -36,12 +40,44 @@ public class EditScreenshotActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_screenshot);
+        Intent intent = getIntent();
+        if(Intent.ACTION_SEND.equals(intent.getAction())){
+            path = getRealFilePath(this,intent.getClipData().getItemAt(0).getUri());
+        }else if(Intent.ACTION_VIEW.equals(intent.getAction())){
+            path = intent.getData().getPath();
+        }else{
+            path = getIntent().getStringExtra(KEY_PATH);
+        }
+
         initUI();
+    }
+
+    public static String getRealFilePath( final Context context, final Uri uri ) {
+        if ( null == uri ) return null;
+        final String scheme = uri.getScheme();
+        String data = null;
+        if ( scheme == null )
+            data = uri.getPath();
+        else if ( ContentResolver.SCHEME_FILE.equals( scheme ) ) {
+            data = uri.getPath();
+        } else if ( ContentResolver.SCHEME_CONTENT.equals( scheme ) ) {
+            Cursor cursor = context.getContentResolver().query( uri, new String[] { MediaStore.Images.ImageColumns.DATA }, null, null, null );
+            if ( null != cursor ) {
+                if ( cursor.moveToFirst() ) {
+                    int index = cursor.getColumnIndex( MediaStore.Images.ImageColumns.DATA );
+                    if ( index > -1 ) {
+                        data = cursor.getString( index );
+                    }
+                }
+                cursor.close();
+            }
+        }
+        return data;
     }
 
     private void initUI(){
         ivBoard = (BoardView) findViewById(R.id.ivBoard);
-        ivBoard.setImageBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra(KEY_PATH)));
+        ivBoard.setImageBitmap(BitmapFactory.decodeFile(path));
         tvBackHistory = (TextView) findViewById(R.id.tvBackHistory);
         tvSave = (TextView) findViewById(R.id.tvSave);
         tvCancle = (TextView) findViewById(R.id.tvCancle);
@@ -68,7 +104,7 @@ public class EditScreenshotActivity extends AppCompatActivity {
                     Intent sendIntent =new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(file)));
-                    sendIntent.setType("text/plain");
+                    sendIntent.setType("image/*");
                     startActivity(Intent.createChooser(sendIntent, "发送给"));
                     break;
                 case R.id.tvCancle:
