@@ -16,7 +16,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -30,7 +29,14 @@
         </service>
 
         <activity
-            android:name=".EditScreenshotActivity"></activity>
+            android:name=".EditScreenshotActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="file" />
+                <data android:mimeType="/*" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
