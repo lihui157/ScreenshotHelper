@@ -108,6 +108,7 @@ public class EditScreenshotActivity extends AppCompatActivity {
                     startActivity(Intent.createChooser(sendIntent, "发送给"));
                     break;
                 case R.id.tvCancle:
+                    finish();
                     break;
                 case R.id.tvText:
                     break;
